@@ -1,0 +1,13 @@
+# Batch vs Online Prediction
+
+Batch prediction computes predictions for a large set of inputs on a fixed schedule (e.g., nightly) and stores the results for later lookup, while online prediction computes a prediction on demand, in real time, in response to a single incoming request. The choice between them is one of the first and most consequential architecture decisions in any ML system design.
+
+Batch prediction is simpler to build and operate: it can use large, throughput-optimized batch compute (Spark, a GPU cluster running overnight), doesn't need a low-latency serving path, and predictions can be precomputed and cached in a simple key-value lookup table. It's the right default whenever predictions don't need to reflect information from the last few minutes — product recommendations refreshed nightly, churn risk scores updated daily, and similar use cases fit well here.
+
+Online prediction is required whenever a prediction must reflect the most current possible state of the world — fraud detection on a transaction happening right now, a search ranking model incorporating the query just typed, or a RAG chatbot answering a question about a document uploaded seconds ago. It demands a low-latency serving infrastructure (a model server, feature lookups from an online store, tight p99 latency budgets), which is meaningfully more complex to build and operate than a batch job.
+
+A hybrid pattern is increasingly common: precompute expensive, slow-changing features in batch (e.g., a user's aggregated 90-day behavior profile) and combine them at serving time with real-time features (e.g., the current session's last 3 clicks) inside a single online prediction request. This captures most of batch's operational simplicity while still incorporating fresh signal.
+
+The tradeoff isn't just latency — it's also about staleness risk. A batch-scored recommendation list served for 24 hours can become actively wrong if user intent changes mid-day (someone just bought the item being recommended), whereas online prediction naturally avoids serving stale results but pays for it in infrastructure complexity and cost per request.
+
+A common interview question: "Design a system to recommend products on an e-commerce homepage. Batch or online?" Answer: it depends on the latency and freshness requirements the business actually needs — a reasonable answer is a hybrid: batch-precompute a broad candidate set of relevant products nightly (cheap, handles the bulk of personalization), then apply a lightweight online re-ranking step using the user's real-time session behavior to reorder that candidate set at request time.

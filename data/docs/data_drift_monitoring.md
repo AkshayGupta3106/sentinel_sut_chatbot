@@ -1,0 +1,13 @@
+# Data Drift and Model Monitoring
+
+Data drift refers to a change in the statistical distribution of a model's input features over time, independent of any change to the model itself. A model trained on last year's customer behavior can degrade purely because customer behavior changed, even though the model's weights never moved.
+
+Covariate shift is drift in the input feature distribution P(X) while the underlying relationship between features and labels P(Y|X) stays the same — e.g., a fraud model sees a surge of transactions from a new country, but fraud still looks the same once you condition on the features. Concept drift is more dangerous: the relationship P(Y|X) itself changes — the same feature values now imply a different label, e.g., a spam classifier's features stay stable but spammers evolve new tactics that make old "clean" feature values predictive of spam.
+
+Common statistical tests for detecting drift include the Kolmogorov-Smirnov test and Population Stability Index (PSI) for continuous features, and the Chi-squared test for categorical features. PSI is popular in industry because it gives a single interpretable number per feature: PSI < 0.1 is typically considered stable, 0.1-0.25 indicates moderate shift worth investigating, and > 0.25 indicates significant drift that likely warrants retraining or investigation.
+
+Label delay is a major practical obstacle to monitoring model quality directly: in many systems (credit default, churn, long-sales-cycle conversion), ground truth labels arrive weeks or months after a prediction is made. This makes real-time accuracy monitoring impossible, so teams monitor proxy signals instead — prediction distribution shift, feature drift, and, where available, faster proxy labels (e.g., 7-day retention as an early proxy for 90-day churn).
+
+Effective production monitoring dashboards typically track four layers simultaneously: system health (latency, error rate, throughput), input data quality (missing values, schema violations, feature drift), output distribution (has the model's prediction distribution shifted, e.g., suddenly predicting the positive class 40% more often), and, when available, downstream business/quality metrics.
+
+A common interview question: "You can't get ground truth labels for 30 days. How do you know if your model degraded today?" Answer: monitor feature drift (PSI per feature) and prediction distribution drift as fast proxies, and set alerting thresholds on those, while accepting that a real accuracy confirmation will lag behind by the label delay. This is exactly the same problem RAG observability faces with query-time quality — you often can't wait for a human to confirm an answer was wrong.
