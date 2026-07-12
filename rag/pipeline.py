@@ -56,6 +56,7 @@ def run_pipeline(raw_query: str, k: int = 5) -> dict:
     raw_answer = generate_answer(prompt)
 
     result = parse_response(raw_answer)
+    result["context"] = context  # full text, not the truncated event-log preview -- needed for evaluation
     result["sources"] = sorted({
         doc["metadata"].get("source", "unknown") for doc in ranked_docs
     })
