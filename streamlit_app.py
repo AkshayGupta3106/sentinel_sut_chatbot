@@ -21,6 +21,8 @@ instrument_sut()  # must run before run_pipeline is ever called
 from rag.pipeline import run_pipeline
 from sentinel.dashboard import render_dashboard
 from sentinel.metrics.dashboard_view import render_metrics
+from sentinel.regression.dashboard_view import render_regression
+from sentinel.rca.dashboard_view import render_rca
 from sentinel.trace.db import get_session, init_db
 from sentinel.evaluation.models import Evaluation
 from sentinel.trace.models import Trace
@@ -82,8 +84,8 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-tab_chat, tab_dashboard, tab_metrics, tab_evaluations = st.tabs([
-    "💬 Chat", "📊 Sentinel Dashboard", "📈 Metrics", "🧪 Evaluations"
+tab_chat, tab_dashboard, tab_metrics, tab_evaluations, tab_regression, tab_rca = st.tabs([
+    "💬 Chat", "📊 Sentinel Dashboard", "📈 Metrics", "🧪 Evaluations", "🚨 Regression", "🔍 RCA"
 ])
 
 with tab_chat:
@@ -227,3 +229,10 @@ with tab_evaluations:
                 use_container_width=True,
                 hide_index=True
             )
+
+with tab_regression:
+    render_regression()
+
+with tab_rca:
+    render_rca()
+
