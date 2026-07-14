@@ -21,22 +21,22 @@ from ..trace.db import get_session, init_db
 from ..regression.models import Regression
 from .models import RCAReport
 
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 _client = None
 
 
-def _get_client(api_key: str):
+def _get_client():
     global _client
     if _client is None:
-        _client = genai.Client(api_key=api_key)
+        _client = genai.Client(api_key=GEMINI_API_KEY)
     return _client
 
 
 def _polish_with_llm(rule_based_summary: str) -> str:
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
+    if not GEMINI_API_KEY:
         return rule_based_summary + " [LLM polish skipped: no GEMINI_API_KEY set]"
     try:
-        client = _get_client(api_key)
+        client = _get_client()
         prompt = (
             "Rewrite the following root-cause-analysis finding as exactly 2-3 "
             "clear, plain-English sentences for an on-call engineer. Do not "

@@ -24,7 +24,7 @@ def main():
         print(f"Total traces in DB: {len(traces)}\n")
 
         for t in traces:
-            status = "[ERROR]" if t.has_error else "[SUCCESS]"
+            status = "❌ error" if t.has_error else "✅ success"
             print(f"trace_id={t.trace_id[:8]}...  stages={t.num_stages}  "
                   f"total={t.total_latency_ms:.2f}ms  slowest={t.slowest_stage} "
                   f"({t.slowest_stage_latency_ms:.2f}ms)  {status}")
@@ -36,7 +36,7 @@ def main():
             ).scalars().all()
 
             for e in events:
-                marker = "  +" if e.status == "success" else "  -"
+                marker = "  ✓" if e.status == "success" else "  ✗"
                 print(f"{marker} {e.stage_name:<22} {e.latency_ms:>8.2f} ms")
             print()
     finally:

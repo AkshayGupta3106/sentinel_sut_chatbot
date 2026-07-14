@@ -17,7 +17,6 @@ import altair as alt
 import streamlit as st
 
 from .trace.trace_assembler import sync_events_to_db
-from .evaluation.evaluators import EvaluationEngine
 
 EVENTS_PATH = os.path.join(os.path.dirname(__file__), "..", "sentinel_events.jsonl")
 
@@ -142,26 +141,6 @@ def render_dashboard():
             .properties(height=250)
         )
         st.altair_chart(waterfall, use_container_width=True)
-
-        # ---- Quality Evaluations for this Trace ----
-        st.markdown("**Trace Quality Evaluations**")
-        try:
-            engine = EvaluationEngine()
-            evals = engine.get_evaluations(selected)
-            if not evals:
-                st.info("No evaluations recorded for this trace yet. Go to the Chat tab and ask a question to run live evaluations.")
-            else:
-                eval_rows = []
-                for ev in evals:
-                    eval_rows.append({
-                        "Evaluator": ev.evaluator_name,
-                        "Score": f"{ev.score:.2f}" if ev.score is not None else "N/A",
-                        "Reasoning": ev.reasoning,
-                        "Skipped": "Yes" if ev.skipped else "No"
-                    })
-                st.dataframe(pd.DataFrame(eval_rows), use_container_width=True, hide_index=True)
-        except Exception as e:
-            st.error(f"Error fetching evaluations: {e}")
 
         with st.expander("Raw event details for this trace"):
             st.dataframe(

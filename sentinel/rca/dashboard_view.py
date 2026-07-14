@@ -20,8 +20,9 @@ def render_rca():
         "finding in plainer English afterward."
     )
 
+    force_refresh = st.checkbox("Force refresh (regenerate reports even if already diagnosed)")
     if st.button("Diagnose all regressed windows"):
-        reports = RCAEngine().diagnose_all(force=True)
+        reports = RCAEngine().diagnose_all(force=force_refresh)
         st.success(f"Diagnosed {len(reports)} window(s).")
         st.rerun()
 
