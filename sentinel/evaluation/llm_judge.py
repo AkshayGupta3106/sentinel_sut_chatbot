@@ -13,10 +13,11 @@ a clearly tagged skipped result, never a crash.
 
 import json
 import os
-from dotenv import load_dotenv
-load_dotenv()
 
 from google import genai
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+JUDGE_MODEL = os.getenv("SENTINEL_JUDGE_MODEL", "gemini-3.5-flash")
 
 _client = None
 
@@ -24,8 +25,7 @@ _client = None
 def _get_client():
     global _client
     if _client is None:
-        api_key = os.getenv("GEMINI_API_KEY")
-        _client = genai.Client(api_key=api_key)
+        _client = genai.Client(api_key=GEMINI_API_KEY)
     return _client
 
 
@@ -54,8 +54,7 @@ Respond ONLY with JSON, no other text: {{"score": <float 0-1>, "reasoning": "<on
 
 
 def _run_judge(prompt: str) -> dict:
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
+    if not GEMINI_API_KEY:
         return {
             "score": None,
             "reasoning": "[FALLBACK: NO GEMINI_API_KEY SET] judge skipped",
@@ -64,9 +63,8 @@ def _run_judge(prompt: str) -> dict:
 
     try:
         client = _get_client()
-        judge_model = os.getenv("SENTINEL_JUDGE_MODEL", "gemini-3.5-flash")
         response = client.models.generate_content(
-            model=judge_model,
+            model=JUDGE_MODEL,
             contents=prompt,
             config={"response_mime_type": "application/json"},
         )
