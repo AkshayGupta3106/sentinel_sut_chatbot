@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Sentinel AI Report — 2026-07-14 06:37 UTC</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background: #0f1115; color: #e6e6e6; margin: 0; padding: 40px; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 16px; color: #9aa5b1; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 40px; }
+  .stats { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0 32px; }
+  .stat-card { background: #1a1d24; border: 1px solid #2a2e37; border-radius: 8px; padding: 16px 20px; min-width: 140px; }
+  .stat-card .value { font-size: 26px; font-weight: 600; }
+  .stat-card .label { font-size: 12px; color: #9aa5b1; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #2a2e37; font-size: 13px; }
+  th { color: #9aa5b1; font-weight: 500; }
+  .severity-critical { color: #e74c3c; font-weight: 600; }
+  .severity-warning { color: #f1c40f; font-weight: 600; }
+  .confidence-high { color: #2ecc71; }
+  .confidence-medium { color: #f1c40f; }
+  .confidence-low { color: #e74c3c; }
+  .empty { color: #6b7280; font-style: italic; }
+</style>
+</head>
+<body>
+  <h1>🛡️ Sentinel AI — Observability Report</h1>
+  <p style="color:#9aa5b1;">Generated 2026-07-14 06:37 UTC</p>
+
+  <div class="stats">
+    
+    <div class="stat-card">
+      <div class="value">118</div>
+      <div class="label">total traces</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="value">8</div>
+      <div class="label">total evaluations</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="value">11</div>
+      <div class="label">total regressions</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="value">3</div>
+      <div class="label">total rca reports</div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="value">2</div>
+      <div class="label">error traces</div>
+    </div>
+    
+  </div>
+
+  <h2>Recent Regressions</h2>
+  
+  <table>
+    <tr><th>Metric</th><th>Method</th><th>Severity</th><th>Window</th><th>Description</th></tr>
+    
+    <tr>
+      <td>error_rate_pct</td>
+      <td>trend</td>
+      <td class="severity-warning">warning</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>error_rate_pct moved +1737.8% over the last 5 windows (1.85 -> 34.00).</td>
+    </tr>
+    
+    <tr>
+      <td>error_rate_pct</td>
+      <td>zscore</td>
+      <td class="severity-critical">critical</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>error_rate_pct=34.00 is 300.41 std devs from baseline mean 1.98.</td>
+    </tr>
+    
+    <tr>
+      <td>latency_p95_ms</td>
+      <td>trend</td>
+      <td class="severity-warning">warning</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>latency_p95_ms moved +388.7% over the last 5 windows (42.97 -> 210.00).</td>
+    </tr>
+    
+    <tr>
+      <td>latency_p95_ms</td>
+      <td>zscore</td>
+      <td class="severity-critical">critical</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>latency_p95_ms=210.00 is 101.17 std devs from baseline mean 42.94.</td>
+    </tr>
+    
+    <tr>
+      <td>stage_latency_avg_ms:chromadb_retrieval</td>
+      <td>trend</td>
+      <td class="severity-warning">warning</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>stage_latency_avg_ms:chromadb_retrieval moved +1273.9% over the last 5 windows (12.01 -> 165.00).</td>
+    </tr>
+    
+    <tr>
+      <td>stage_latency_avg_ms:chromadb_retrieval</td>
+      <td>zscore</td>
+      <td class="severity-critical">critical</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>stage_latency_avg_ms:chromadb_retrieval=165.00 is 488.20 std devs from baseline mean 12.12.</td>
+    </tr>
+    
+    <tr>
+      <td>stage_latency_avg_ms:chromadb_retrieval</td>
+      <td>threshold</td>
+      <td class="severity-critical">critical</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>stage_latency_avg_ms:chromadb_retrieval=165.00 breached fixed threshold 50.0 (above).</td>
+    </tr>
+    
+    <tr>
+      <td>latency_p95_ms</td>
+      <td>threshold</td>
+      <td class="severity-critical">critical</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>latency_p95_ms=210.00 breached fixed threshold 100.0 (above).</td>
+    </tr>
+    
+    <tr>
+      <td>error_rate_pct</td>
+      <td>threshold</td>
+      <td class="severity-critical">critical</td>
+      <td>2026-07-08 00:00:00</td>
+      <td>error_rate_pct=34.00 breached fixed threshold 10.0 (above).</td>
+    </tr>
+    
+    <tr>
+      <td>stage_latency_avg_ms:chromadb_retrieval</td>
+      <td>zscore</td>
+      <td class="severity-warning">warning</td>
+      <td>2026-07-07 00:00:00</td>
+      <td>stage_latency_avg_ms:chromadb_retrieval=12.59 is 2.06 std devs from baseline mean 12.04.</td>
+    </tr>
+    
+  </table>
+  
+
+  <h2>Root Cause Analysis Highlights</h2>
+  
+  <table>
+    <tr><th>Window</th><th>Category</th><th>Confidence</th><th>Summary</th></tr>
+    
+    <tr>
+      <td>2026-07-08 00:00:00</td>
+      <td>stage_latency:chromadb_retrieval</td>
+      <td class="confidence-high">high</td>
+      <td>Overall trace latency (p95) regressed by +388.7%. The 'chromadb_retrieval' stage's average latency regressed by +1273.9% in the same window, making it the dominant contributor. Root cause: chromadb_retrieval stage slowdown (e.g. cold index, upstream API degradation, or a config change affecting that stage specifically). [LLM polish skipped: no GEMINI_API_KEY set]</td>
+    </tr>
+    
+    <tr>
+      <td>2026-07-07 00:00:00</td>
+      <td>unmatched_pattern</td>
+      <td class="confidence-low">low</td>
+      <td>Regression(s) detected on stage_latency_avg_ms:chromadb_retrieval but the pattern doesn't match a known rule. Manual investigation needed. [LLM polish skipped: no GEMINI_API_KEY set]</td>
+    </tr>
+    
+    <tr>
+      <td>2026-07-04 00:00:00</td>
+      <td>error_rate_isolated</td>
+      <td class="confidence-medium">medium</td>
+      <td>Error rate spiked to 1.9% without an accompanying latency regression. This points to a functional bug (e.g. input validation, parsing, or an upstream schema change) rather than a performance issue. Check recent non-timing-related code or config changes. [LLM polish skipped: no GEMINI_API_KEY set]</td>
+    </tr>
+    
+  </table>
+  
+
+  <h2>Worst-Performing Recent Traces</h2>
+  
+  <table>
+    <tr><th>Trace ID</th><th>Started</th><th>Stages</th><th>Total Latency (ms)</th><th>Slowest Stage</th><th>Status</th></tr>
+    
+    <tr>
+      <td>c4df4a05...</td>
+      <td>2026-07-11 17:41:27.329135</td>
+      <td>8</td>
+      <td>5253.65</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>2f793d50...</td>
+      <td>2026-07-14 06:37:26.250843</td>
+      <td>8</td>
+      <td>4119.57</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>387b2c24...</td>
+      <td>2026-07-12 12:20:43.243250</td>
+      <td>8</td>
+      <td>4039.09</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>9cae1e84...</td>
+      <td>2026-07-13 05:06:28.236748</td>
+      <td>8</td>
+      <td>3633.60</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>e8c59b4e...</td>
+      <td>2026-07-12 12:23:06.044766</td>
+      <td>8</td>
+      <td>3245.94</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>290d31d0...</td>
+      <td>2026-07-12 12:21:34.014777</td>
+      <td>8</td>
+      <td>3131.20</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>d6f27076...</td>
+      <td>2026-07-11 17:38:25.114202</td>
+      <td>8</td>
+      <td>2514.10</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>8695fb3f...</td>
+      <td>2026-07-12 11:45:33.408070</td>
+      <td>8</td>
+      <td>2174.11</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>1f619a1b...</td>
+      <td>2026-07-12 11:46:07.117581</td>
+      <td>8</td>
+      <td>2047.17</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+    <tr>
+      <td>d5c05954...</td>
+      <td>2026-07-12 12:23:16.354869</td>
+      <td>8</td>
+      <td>1934.97</td>
+      <td>generation_gemini</td>
+      <td>✅ success</td>
+    </tr>
+    
+  </table>
+  
+
+</body>
+</html>
