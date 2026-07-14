@@ -54,7 +54,7 @@ def render_reports():
 
     report_path = st.session_state.get("report_path")
     if report_path:
-        with open(report_path) as f:
+        with open(report_path, encoding="utf-8") as f:
             html_content = f.read()
         st.download_button("⬇ Download HTML report", html_content, file_name="sentinel_report.html", mime="text/html")
         with st.expander("Preview report"):

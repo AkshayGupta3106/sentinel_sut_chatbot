@@ -81,7 +81,7 @@ class EventCollector:
             self._buffer.append(event)
 
     def _writer_loop(self) -> None:
-        with open(self._output_path, "a") as f:
+        with open(self._output_path, "a", encoding="utf-8") as f:
             while not self._stop_event.is_set():
                 try:
                     event = self._queue.get(timeout=self._flush_interval)
@@ -116,7 +116,7 @@ class EventCollector:
             pass
 
         if remaining:
-            with open(self._output_path, "a") as f:
+            with open(self._output_path, "a", encoding="utf-8") as f:
                 for event in remaining:
                     f.write(event.model_dump_json() + "\n")
 

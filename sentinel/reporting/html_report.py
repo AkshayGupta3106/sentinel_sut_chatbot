@@ -126,7 +126,7 @@ def generate_html_report(output_path: str = "sentinel_report.html", top_n: int =
         worst_traces=worst_traces,
     )
 
-    with open(output_path, "w") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
 
     return output_path

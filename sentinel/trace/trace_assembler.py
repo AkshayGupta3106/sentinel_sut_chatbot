@@ -24,7 +24,7 @@ def _load_raw_events(path: str = EVENTS_PATH) -> list[dict]:
     if not os.path.exists(path):
         return []
     events = []
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:

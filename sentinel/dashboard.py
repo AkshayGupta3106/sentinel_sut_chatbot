@@ -26,7 +26,7 @@ def load_events() -> pd.DataFrame:
         return pd.DataFrame()
 
     rows = []
-    with open(EVENTS_PATH, "r") as f:
+    with open(EVENTS_PATH, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
