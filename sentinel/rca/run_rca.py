@@ -8,11 +8,13 @@ Run (after Section 7's seed + detect):
     python -m sentinel.rca.run_rca
 """
 
+import sys
 from .rca_engine import RCAEngine
 
 
 def main():
-    reports = RCAEngine().diagnose_all()
+    force = "--force" in sys.argv
+    reports = RCAEngine().diagnose_all(force=force)
 
     if not reports:
         print("No regressions to diagnose. Run Section 7's regression detection first.")

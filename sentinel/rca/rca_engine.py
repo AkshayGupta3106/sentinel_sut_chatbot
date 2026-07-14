@@ -21,35 +21,40 @@ from ..trace.db import get_session, init_db
 from ..regression.models import Regression
 from .models import RCAReport
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 _client = None
 
 
-def _get_client():
+def _get_client(api_key: str):
     global _client
     if _client is None:
-        _client = genai.Client(api_key=GEMINI_API_KEY)
+        _client = genai.Client(api_key=api_key)
     return _client
 
 
 def _polish_with_llm(rule_based_summary: str) -> str:
-    if not GEMINI_API_KEY:
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
         return rule_based_summary + " [LLM polish skipped: no GEMINI_API_KEY set]"
     try:
-        client = _get_client()
+        client = _get_client(api_key)
         prompt = (
-            "Rewrite this root-cause-analysis finding as 2-3 clear, plain-English "
-            "sentences for an on-call engineer, without changing its meaning or "
-            "adding any new claims:\n\n" + rule_based_summary
+            "Rewrite the following root-cause-analysis finding as exactly 2-3 "
+            "clear, plain-English sentences for an on-call engineer. Do not "
+            "change its meaning or add any new claims.\n\n"
+            "Output ONLY the rewritten sentences as plain text. Do not offer "
+            "multiple options, do not write 'Option 1' / 'Option 2', do not "
+            "add headers, markdown, or any explanation of what you did -- "
+            "just the final rewritten text itself, nothing else.\n\n"
+            f"Finding:\n{rule_based_summary}"
         )
-        response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+        response = client.models.generate_content(model="gemini-3.5-flash", contents=prompt)
         return response.text.strip()
     except Exception as e:
         return rule_based_summary + f" [LLM polish failed: {e}]"
 
 
 class RCAEngine:
-    def diagnose_window(self, window_start: datetime) -> dict | None:
+    def diagnose_window(self, window_start: datetime, force: bool = False) -> dict | None:
         session = get_session()
         try:
             regressions = session.execute(
@@ -139,18 +144,21 @@ class RCAEngine:
             "rule_based_summary": rule_summary,
             "summary": summary,
         }
-        self._persist(report)
+        self._persist(report, force=force)
         return report
 
-    def _persist(self, report: dict) -> None:
+    def _persist(self, report: dict, force: bool = False) -> None:
         init_db()
         session = get_session()
         try:
-            exists = session.execute(
+            existing = session.execute(
                 select(RCAReport).where(RCAReport.window_start == report["window_start"])
             ).scalar_one_or_none()
-            if exists:
+            if existing and not force:
                 return
+            if existing and force:
+                session.delete(existing)
+                session.flush()
             session.add(RCAReport(
                 window_start=report["window_start"],
                 regression_ids=report["regression_ids"],
@@ -162,7 +170,7 @@ class RCAEngine:
         finally:
             session.close()
 
-    def diagnose_all(self) -> list[dict]:
+    def diagnose_all(self, force: bool = False) -> list[dict]:
         init_db()
         session = get_session()
         try:
@@ -172,7 +180,7 @@ class RCAEngine:
 
         reports = []
         for ws in window_starts:
-            r = self.diagnose_window(ws)
+            r = self.diagnose_window(ws, force=force)
             if r:
                 reports.append(r)
         return reports

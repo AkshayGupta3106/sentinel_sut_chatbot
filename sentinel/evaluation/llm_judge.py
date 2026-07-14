@@ -15,9 +15,18 @@ import json
 import os
 
 from google import genai
+from groq import Groq
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-JUDGE_MODEL = os.getenv("SENTINEL_JUDGE_MODEL", "gemini-2.5-flash")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+# Choose Groq if key is present, otherwise fallback to Gemini
+USE_GROQ = bool(GROQ_API_KEY)
+
+if USE_GROQ:
+    JUDGE_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+else:
+    JUDGE_MODEL = os.getenv("SENTINEL_JUDGE_MODEL", "gemini-3.5-flash")
 
 _client = None
 
@@ -25,7 +34,10 @@ _client = None
 def _get_client():
     global _client
     if _client is None:
-        _client = genai.Client(api_key=GEMINI_API_KEY)
+        if USE_GROQ:
+            _client = Groq(api_key=GROQ_API_KEY)
+        else:
+            _client = genai.Client(api_key=GEMINI_API_KEY)
     return _client
 
 
@@ -54,21 +66,39 @@ Respond ONLY with JSON, no other text: {{"score": <float 0-1>, "reasoning": "<on
 
 
 def _run_judge(prompt: str) -> dict:
-    if not GEMINI_API_KEY:
-        return {
-            "score": None,
-            "reasoning": "[FALLBACK: NO GEMINI_API_KEY SET] judge skipped",
-            "skipped": True,
-        }
+    if USE_GROQ:
+        if not GROQ_API_KEY:
+            return {
+                "score": None,
+                "reasoning": "[FALLBACK: NO GROQ_API_KEY SET] judge skipped",
+                "skipped": True,
+            }
+    else:
+        if not GEMINI_API_KEY:
+            return {
+                "score": None,
+                "reasoning": "[FALLBACK: NO GEMINI_API_KEY SET] judge skipped",
+                "skipped": True,
+            }
 
     try:
         client = _get_client()
-        response = client.models.generate_content(
-            model=JUDGE_MODEL,
-            contents=prompt,
-            config={"response_mime_type": "application/json"},
-        )
-        parsed = json.loads(response.text)
+        if USE_GROQ:
+            response = client.chat.completions.create(
+                model=JUDGE_MODEL,
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+            )
+            content = response.choices[0].message.content
+        else:
+            response = client.models.generate_content(
+                model=JUDGE_MODEL,
+                contents=prompt,
+                config={"response_mime_type": "application/json"},
+            )
+            content = response.text
+
+        parsed = json.loads(content)
         return {
             "score": float(parsed["score"]),
             "reasoning": parsed.get("reasoning", ""),

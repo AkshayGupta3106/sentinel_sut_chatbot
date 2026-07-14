@@ -21,7 +21,7 @@ def render_rca():
     )
 
     if st.button("Diagnose all regressed windows"):
-        reports = RCAEngine().diagnose_all()
+        reports = RCAEngine().diagnose_all(force=True)
         st.success(f"Diagnosed {len(reports)} window(s).")
         st.rerun()
 
