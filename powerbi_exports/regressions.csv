@@ -1,0 +1,12 @@
+id,metric_name,method,severity,window_start,window_minutes,baseline_value,current_value,delta_pct,description,detected_at
+1,error_rate_pct,threshold,critical,2026-07-08,1440,10.0,34.0,,error_rate_pct=34.00 breached fixed threshold 10.0 (above).,2026-07-13 04:54:45.611820
+2,latency_p95_ms,threshold,critical,2026-07-08,1440,100.0,210.0,,latency_p95_ms=210.00 breached fixed threshold 100.0 (above).,2026-07-13 04:54:45.611820
+3,stage_latency_avg_ms:chromadb_retrieval,threshold,critical,2026-07-08,1440,50.0,165.0,,stage_latency_avg_ms:chromadb_retrieval=165.00 breached fixed threshold 50.0 (above).,2026-07-13 04:54:45.611820
+4,stage_latency_avg_ms:chromadb_retrieval,zscore,warning,2026-07-07,1440,12.037666666666667,12.587,4.56345360396533,stage_latency_avg_ms:chromadb_retrieval=12.59 is 2.06 std devs from baseline mean 12.04.,2026-07-13 04:54:45.611820
+5,stage_latency_avg_ms:chromadb_retrieval,zscore,critical,2026-07-08,1440,12.116142857142856,165.0,1261.8195323830075,stage_latency_avg_ms:chromadb_retrieval=165.00 is 488.20 std devs from baseline mean 12.12.,2026-07-13 04:54:45.623344
+6,stage_latency_avg_ms:chromadb_retrieval,trend,warning,2026-07-08,1440,12.01,165.0,1273.8551207327228,stage_latency_avg_ms:chromadb_retrieval moved +1273.9% over the last 5 windows (12.01 -> 165.00).,2026-07-13 04:54:45.624824
+7,latency_p95_ms,zscore,critical,2026-07-08,1440,42.93557142857143,210.0,389.10493796352677,latency_p95_ms=210.00 is 101.17 std devs from baseline mean 42.94.,2026-07-13 04:54:45.625939
+8,latency_p95_ms,trend,warning,2026-07-08,1440,42.974,210.0,388.66756643551923,latency_p95_ms moved +388.7% over the last 5 windows (42.97 -> 210.00).,2026-07-13 04:54:45.625939
+9,error_rate_pct,zscore,warning,2026-07-04,1440,2.027,1.85,-8.732116428219044,error_rate_pct=1.85 is -2.00 std devs from baseline mean 2.03.,2026-07-13 04:54:45.626933
+10,error_rate_pct,zscore,critical,2026-07-08,1440,1.9845714285714287,34.0,1613.216239562338,error_rate_pct=34.00 is 300.41 std devs from baseline mean 1.98.,2026-07-13 04:54:45.626933
+11,error_rate_pct,trend,warning,2026-07-08,1440,1.85,34.0,1737.8378378378375,error_rate_pct moved +1737.8% over the last 5 windows (1.85 -> 34.00).,2026-07-13 04:54:45.627942

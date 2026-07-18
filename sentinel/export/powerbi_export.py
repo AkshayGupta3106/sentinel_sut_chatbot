@@ -99,5 +99,75 @@ def export_all() -> str:
     return EXPORT_DIR
 
 
+def export_combined_evaluation_report() -> str:
+    """
+    A single flat table: one row per trace, with every evaluator's
+    score as its own column (heuristic_faithfulness_overlap,
+    heuristic_relevance_keyword, llm_judge_faithfulness,
+    llm_judge_relevance), joined against that trace's own latency/
+    error/source info.
+
+    This trades relational correctness for convenience -- no
+    relationships to set up in Power BI, just one table you can build
+    every Evaluation-tab visual directly against. The 7-table export
+    (export_all) is still the more "correct" model for anything beyond
+    the Evaluation view; use this one when you just want to move fast.
+    """
+    repo = SentinelRepository()
+    traces = repo.get_all_traces()
+    evaluations = repo.get_all_evaluations()
+
+    traces_df = _to_df(traces, lambda t: {
+        "trace_id": t.trace_id,
+        "started_at": t.started_at,
+        "total_latency_ms": t.total_latency_ms,
+        "num_stages": t.num_stages,
+        "slowest_stage": t.slowest_stage,
+        "slowest_stage_latency_ms": t.slowest_stage_latency_ms,
+        "has_error": t.has_error,
+        "error_stage": t.error_stage,
+    })
+
+    if not evaluations:
+        combined = traces_df.copy()
+        for col in ["heuristic_faithfulness_overlap", "heuristic_relevance_keyword",
+                    "llm_judge_faithfulness", "llm_judge_relevance"]:
+            combined[col] = None
+    else:
+        eval_df = _to_df(evaluations, lambda e: {
+            "trace_id": e.trace_id, "evaluator_name": e.evaluator_name, "score": e.score,
+        })
+        # Pivot: one row per trace_id, one column per evaluator_name
+        # dropna=False matters here: pivot_table's default (dropna=True)
+        # silently deletes any evaluator column that's entirely NaN --
+        # which is exactly what happens to llm_judge_* columns whenever
+        # no GEMINI_API_KEY is set (score=None for every row). Without
+        # this, those columns would vanish from the export instead of
+        # showing up as an honest all-null column.
+        pivot = eval_df.pivot_table(
+            index="trace_id", columns="evaluator_name", values="score",
+            aggfunc="first", dropna=False,
+        ).reset_index()
+
+        combined = traces_df.merge(pivot, on="trace_id", how="left")
+
+    # A convenience "overall_quality" average across whichever evaluator
+    # columns are actually present and non-null for that row -- makes a
+    # single-number KPI card trivial to build in Power BI.
+    score_cols = [c for c in combined.columns if "faithfulness" in c or "relevance" in c]
+    if score_cols:
+        combined["avg_quality_score"] = combined[score_cols].mean(axis=1, skipna=True)
+
+    os.makedirs(EXPORT_DIR, exist_ok=True)
+    csv_path = os.path.join(EXPORT_DIR, "combined_evaluation_report.csv")
+    parquet_path = os.path.join(EXPORT_DIR, "combined_evaluation_report.parquet")
+    combined.to_csv(csv_path, index=False)
+    combined.to_parquet(parquet_path, index=False)
+
+    print(f"Combined evaluation report: {len(combined)} rows -> {csv_path}")
+    return csv_path
+
+
 if __name__ == "__main__":
     export_all()
+    export_combined_evaluation_report()
